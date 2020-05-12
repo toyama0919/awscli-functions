@@ -54,6 +54,17 @@ ec2-stop() {
 ec2-start() {
   for INSTANCE_ID in $(ec2-ids stopped)
   do
-    aws ec2 stop-instances --instance-ids $INSTANCE_ID
+    aws ec2 start-instances --instance-ids $INSTANCE_ID
   done
+}
+
+ami-list() {
+  aws ec2 describe-images \
+    --owners $(aws-current-account-id) \
+    --query 'Images[].{Name:Name,ImageId:ImageId,State:State}' \
+    | jq -c ".[]"
+}
+
+ami-id() {
+  ami-list | peco | jq -r ".ImageId"
 }
