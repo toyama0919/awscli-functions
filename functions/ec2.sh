@@ -60,7 +60,7 @@ ec2-start() {
 
 ami-list() {
   aws ec2 describe-images \
-    --owners $(aws-current-account-id) \
+    --owners self \
     --query 'Images[].{Name:Name,ImageId:ImageId,State:State}' \
     | jq -c ".[]"
 }
