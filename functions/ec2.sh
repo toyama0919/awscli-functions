@@ -44,20 +44,6 @@ ec2-terminate() {
   done
 }
 
-ec2-stop() {
-  for INSTANCE_ID in $(ec2-ids)
-  do
-    aws ec2 stop-instances --instance-ids $INSTANCE_ID
-  done
-}
-
-ec2-start() {
-  for INSTANCE_ID in $(ec2-ids stopped)
-  do
-    aws ec2 start-instances --instance-ids $INSTANCE_ID
-  done
-}
-
 ami-list() {
   aws ec2 describe-images \
     --owners self \
