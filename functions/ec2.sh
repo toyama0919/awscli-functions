@@ -70,3 +70,29 @@ ec2-tag() {
     "Name=key,Values=$TAG_NAME" \
     | jq -r ".Tags[].Value"
 }
+
+# spot price
+ec2-spot-prices() {
+  if [ $# -le 0 ]; then
+    echo not INSTANCE_TYPE parameter.
+    return
+  else
+    INSTANCE_TYPE=$1
+  fi
+  aws ec2 describe-spot-price-history \
+    --instance-types $INSTANCE_TYPE \
+    --product-description 'Linux/UNIX (Amazon VPC)' \
+    --start-time "$(gdate --iso-8601=seconds)" \
+    | jq ".SpotPriceHistory | sort_by(.SpotPrice)"
+}
+
+ec2-spot-lowest-zone() {
+  ec2-spot-prices $1 | jq -r ".[0].AvailabilityZone"
+}
+
+ec2-spot-lowest-private-subnet() {
+  AZ=$(ec2-spot-lowest-zone $1)
+  aws ec2 describe-subnets \
+    --filters Name=tag:Name,Values='*private*' Name=availability-zone,Values=$AZ \
+    | jq -r ".Subnets[0].SubnetId"
+}
