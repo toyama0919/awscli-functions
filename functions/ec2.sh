@@ -82,7 +82,7 @@ ec2-spot-prices() {
   aws ec2 describe-spot-price-history \
     --instance-types $INSTANCE_TYPE \
     --product-description 'Linux/UNIX (Amazon VPC)' \
-    --start-time "$(gdate --iso-8601=seconds)" \
+    --start-time "$(date --iso-8601=seconds)" \
     | jq ".SpotPriceHistory | sort_by(.SpotPrice)"
 }
 
