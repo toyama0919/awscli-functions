@@ -32,6 +32,12 @@ ec2-ssh() {
 ec2-terminate() {
   for INSTANCE_ID in $(ec2-ids)
   do
+    read -p "terminate? $(ec2-tag Name $INSTANCE_ID) (y/N): " yn
+    if [[ $yn != [yY] ]]; then
+      echo cancel
+      continue
+    fi
+
     SPOT_INSTANCE_REQUEST_ID=$(
       aws ec2 describe-spot-instance-requests \
         --filters Name=instance-id,Values=$INSTANCE_ID \
@@ -53,4 +59,14 @@ ami-list() {
 
 ami-id() {
   ami-list | peco | jq -r ".ImageId"
+}
+
+# tag
+ec2-tag() {
+  TAG_NAME=$1
+  INSTANCE_ID=$2
+  aws ec2 describe-tags \
+    --filters "Name=resource-id,Values=$INSTANCE_ID" \
+    "Name=key,Values=$TAG_NAME" \
+    | jq -r ".Tags[].Value"
 }
