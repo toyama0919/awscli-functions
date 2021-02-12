@@ -3,7 +3,7 @@
 ## import function(global)
 
 ```bash
-sudo -E -H bash -c "git clone git@github.com:toyama0919/awscli-functions.git /opt/awscli-functions" && \
+sudo -E -H bash -c "git clone https://github.com/toyama0919/awscli-functions.git /opt/awscli-functions" && \
 source /opt/awscli-functions/import.sh
 ```
 
