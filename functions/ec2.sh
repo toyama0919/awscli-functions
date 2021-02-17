@@ -96,3 +96,32 @@ ec2-spot-lowest-private-subnet() {
     --filters Name=tag:Name,Values='*private*' Name=availability-zone,Values=$AZ \
     | jq -r ".Subnets[0].SubnetId"
 }
+
+ec2-userdata-always() {
+  FILE=$(mktemp)
+  cat << EOS > $FILE
+Content-Type: multipart/mixed; boundary="//"
+MIME-Version: 1.0
+
+--//
+Content-Type: text/cloud-config; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="cloud-config.txt"
+
+#cloud-config
+cloud_final_modules:
+- [scripts-user, always]
+
+--//
+Content-Type: text/x-shellscript; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="userdata.txt"
+
+#!/bin/bash
+$@
+--//
+EOS
+  echo $FILE
+}
