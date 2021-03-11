@@ -30,6 +30,7 @@ ec2-ssh() {
 }
 
 ec2-terminate() {
+  set -x
   for INSTANCE_ID in $(ec2-ids)
   do
     read -p "terminate? $(ec2-tag Name $INSTANCE_ID) (y/N): " yn
