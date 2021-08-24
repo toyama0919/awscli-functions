@@ -98,6 +98,15 @@ ec2-spot-lowest-private-subnet() {
     | jq -r ".Subnets[0].SubnetId"
 }
 
+ec2-spot-lowest-private-subnets() {
+  ec2-spot-prices $1 | jq -r ".[].AvailabilityZone" | while read AZ
+  do
+    aws ec2 describe-subnets \
+      --filters Name=tag:Name,Values='*private*' Name=availability-zone,Values=$AZ \
+      | jq -r ".Subnets[0].SubnetId"
+  done
+}
+
 ec2-userdata-always() {
   FILE=$(mktemp)
   cat << EOS > $FILE
